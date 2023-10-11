@@ -59,9 +59,18 @@ namespace rendertest
 							float x, y, z;
 							if (float.TryParse(tokens[1], out x) && float.TryParse(tokens[2], out y) && float.TryParse(tokens[3], out z))
 							{
-								Vector3 v = new Vector3(x, y, z);
-								verts.Add(v);
+								verts.Add(new Vector3(x, y, z));
 							}
+							else
+							{
+                                tokens[1] = tokens[1].Replace('.', ',');
+                                tokens[2] = tokens[2].Replace('.', ',');
+                                tokens[3] = tokens[3].Replace('.', ',');
+								float.TryParse(tokens[1], out x);
+								float.TryParse(tokens[2], out y);
+								float.TryParse(tokens[3], out z);
+                                verts.Add(new Vector3(x, y, z));
+                            }
 						}
 
 						if (firstChar == 'f')
