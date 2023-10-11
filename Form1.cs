@@ -264,9 +264,8 @@ namespace rendertest
 					{
 						float z1 = (t1.p[0].Z + t1.p[1].Z + t1.p[2].Z) / 3.0f;
 						float z2 = (t2.p[0].Z + t2.p[1].Z + t2.p[2].Z) / 3.0f;
-						return z1 < z2 ? 1 : (z1 > z2 ? -1 : 0);
+						return z1 > z2 ? 1 : (z1 < z2 ? -1 : 0);
 					});
-
 					foreach (tri t in rastList)
 					{
 						Point p1 = new Point((int)(t.p[0].X * 100 + centx), (int)(t.p[0].Y * 100 + centy));
