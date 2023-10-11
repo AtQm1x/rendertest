@@ -10,7 +10,7 @@ namespace rendertest
 	public partial class Form1 : Form
 	{
 		double scale = 1;
-		double tgfps = 60;
+		double tgfps = 64;
 		bool dofill = false;
 		bool dodraw = true;
 		bool dorotate = false;
@@ -131,9 +131,9 @@ namespace rendertest
 		public void timer1_Tick(object sender, EventArgs e)
         {
             DoubleBuffered = doublebuffer;
-            timer.Interval = Math.Abs((int)Math.Round(1000 / (tgfps + 1f)));
+            timer.Interval = Math.Abs((int)Math.Round(1000 / tgfps + 0.1));
 			TimeSpan elapsedTime = DateTime.Now - lastFrameTime;
-			FPS = 1 / elapsedTime.TotalSeconds;
+			FPS = 1000 / elapsedTime.TotalMilliseconds;
 			lastFrameTime = DateTime.Now;
 
 			if (dorotate)
@@ -201,7 +201,7 @@ namespace rendertest
 				{
 					g.DrawString($"Target FPS: {tgfps}", Font, Brushes.White, 20, 40);
 					g.DrawString($"Frame interval: {timer.Interval} ms", Font, Brushes.White, 20, 60);
-					g.DrawString($"FPS: {Math.Round(FPS)}", Font, Brushes.White, 20, 80);
+					g.DrawString($"FPS: {Math.Round(FPS,2)}", Font, Brushes.White, 20, 80);
 					g.DrawString($"Frame number: {tick}", Font, Brushes.White, 20, 100);
 					g.DrawString($"Polygon count: {polygon_count}", Font, Brushes.White, 20, 120);
 					g.DrawString($"ANG_X: {Math.Round(angx, 2)}", Font, Brushes.White, 20, 140);
@@ -307,11 +307,11 @@ namespace rendertest
 					break;
 
 				case Keys.E:
-					tgfps += 5;
+					tgfps *= 2;
 					break;
 
 				case Keys.Q:
-					tgfps -= 5;
+					tgfps /= 2;
 					break;
 
 				case Keys.W:
