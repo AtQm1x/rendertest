@@ -59,9 +59,18 @@ namespace rendertest
 							float x, y, z;
 							if (float.TryParse(tokens[1], out x) && float.TryParse(tokens[2], out y) && float.TryParse(tokens[3], out z))
 							{
-								Vector3 v = new Vector3(x, y, z);
-								verts.Add(v);
+								verts.Add(new Vector3(x, y, z));
 							}
+							else
+							{
+                                tokens[1] = tokens[1].Replace('.', ',');
+                                tokens[2] = tokens[2].Replace('.', ',');
+                                tokens[3] = tokens[3].Replace('.', ',');
+								float.TryParse(tokens[1], out x);
+								float.TryParse(tokens[2], out y);
+								float.TryParse(tokens[3], out z);
+                                verts.Add(new Vector3(x, y, z));
+                            }
 						}
 
 						if (firstChar == 'f')
@@ -266,8 +275,6 @@ namespace rendertest
 						float z2 = (t2.p[0].Z + t2.p[1].Z + t2.p[2].Z) / 3.0f;
 						return z1 > z2 ? 1 : (z1 < z2 ? -1 : 0);
 					});
-					//rastList.Reverse();
-
 					foreach (tri t in rastList)
 					{
 						Point p1 = new Point((int)(t.p[0].X * 100 + centx), (int)(t.p[0].Y * 100 + centy));
