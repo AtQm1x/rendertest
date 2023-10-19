@@ -27,7 +27,7 @@ namespace rendertest
 				p[1] = p2;
 				p[2] = p3;
 			}
-		} // triangle structure
+		} // tri structure
 		struct Mesh
 		{
 			public List<tri> Tris;
@@ -125,7 +125,127 @@ namespace rendertest
 				M44 = 1f
 			};
 
-			mesh1.Tris = new List<tri>();
+			mesh1.Tris = new List<tri>{
+			    // SOUTH
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(-1.0f, -1.0f, -1.0f),
+			            new Vector3(-1.0f, 1.0f, -1.0f),
+			            new Vector3(1.0f, 1.0f, -1.0f)
+			        }
+			    },
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(-1.0f, -1.0f, -1.0f),
+			            new Vector3(1.0f, 1.0f, -1.0f),
+			            new Vector3(1.0f, -1.0f, -1.0f)
+			        }
+			    },
+			
+			    // EAST
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(1.0f, -1.0f, -1.0f),
+			            new Vector3(1.0f, 1.0f, -1.0f),
+			            new Vector3(1.0f, 1.0f, 1.0f)
+			        }
+			    },
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(1.0f, -1.0f, -1.0f),
+			            new Vector3(1.0f, 1.0f, 1.0f),
+			            new Vector3(1.0f, -1.0f, 1.0f)
+			        }
+			    },
+			
+			    // NORTH
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(1.0f, -1.0f, 1.0f),
+			            new Vector3(1.0f, 1.0f, 1.0f),
+			            new Vector3(-1.0f, 1.0f, 1.0f)
+			        }
+			    },
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(1.0f, -1.0f, 1.0f),
+			            new Vector3(-1.0f, 1.0f, 1.0f),
+			            new Vector3(-1.0f, -1.0f, 1.0f)
+			        }
+			    },
+			
+			    // WEST
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(-1.0f, -1.0f, 1.0f),
+			            new Vector3(-1.0f, 1.0f, 1.0f),
+			            new Vector3(-1.0f, 1.0f, -1.0f)
+			        }
+			    },
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(-1.0f, -1.0f, 1.0f),
+			            new Vector3(-1.0f, 1.0f, -1.0f),
+			            new Vector3(-1.0f, -1.0f, -1.0f)
+			        }
+			    },
+			
+			    // TOP
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(-1.0f, 1.0f, -1.0f),
+			            new Vector3(-1.0f, 1.0f, 1.0f),
+			            new Vector3(1.0f, 1.0f, 1.0f)
+			        }
+			    },
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(-1.0f, 1.0f, -1.0f),
+			            new Vector3(1.0f, 1.0f, 1.0f),
+			            new Vector3(1.0f, 1.0f, -1.0f)
+			        }
+			    },
+			
+			    // BOTTOM
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(1.0f, -1.0f, 1.0f),
+			            new Vector3(-1.0f, -1.0f, 1.0f),
+			            new Vector3(-1.0f, -1.0f, -1.0f)
+			        }
+			    },
+			    new tri
+			    {
+			        p = new Vector3[]
+			        {
+			            new Vector3(1.0f, -1.0f, 1.0f),
+			            new Vector3(-1.0f, -1.0f, -1.0f),
+			            new Vector3(1.0f, -1.0f, -1.0f)
+			        }
+			    }
+			};
 		} // on initialise
 		Mesh mesh1 = new Mesh();
 
