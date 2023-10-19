@@ -197,111 +197,99 @@ namespace rendertest
 		private void Form1_Paint(object sender, PaintEventArgs e)
 		{
 			Bitmap buffer = new Bitmap(Width, Height);
+			Graphics g = CreateGraphics();
+			int num = (int)(125 + (Math.Sin(0.01 * tick) * 125));
+			List<tri> rastList = new List<tri>();
+			g.Clear(Color.Black);
 
-			using (Graphics b = Graphics.FromImage(buffer))
+			/* Show FPS, Angles, Controls */
 			{
-				Graphics g = CreateGraphics();
-				int num = (int)(125 + (Math.Sin(0.01 * tick) * 125));
-				//g.FillRectangle(Brushes.Black, centx - 250, centy - 250, 250, 250);
-				List<tri> rastList = new List<tri>();
-				g.Clear(Color.Black);
+				g.DrawString($"Target FPS: {tgfps}", Font, Brushes.White, 20, 40);
+				g.DrawString($"Frame interval: {timer.Interval} ms", Font, Brushes.White, 20, 60);
+				g.DrawString($"FPS: {Math.Round(FPS, 2)}", Font, Brushes.White, 20, 80);
+				g.DrawString($"Frame number: {tick}", Font, Brushes.White, 20, 100);
+				g.DrawString($"Polygon count: {polygon_count}", Font, Brushes.White, 20, 120);
+				g.DrawString($"ANG_X: {Math.Round(angx, 2)}", Font, Brushes.White, 20, 140);
+				g.DrawString($"ANG_Y: {Math.Round(angy, 2)}", Font, Brushes.White, 20, 160);
+				g.DrawString($"ANG_Z: {Math.Round(angz, 2)}", Font, Brushes.White, 20, 180);
+				g.DrawString($"'E' / 'Q' To increase / decrease target fps", Font, Brushes.White, 20, 200);
+				g.DrawString($"'G' To select an .OBJ file", Font, Brushes.White, 20, 220);
+				g.DrawString($"'F' To toggle filling: {dofill}", Font, Brushes.White, 20, 240);
+				g.DrawString($"'R' To toggle drawing: {dodraw}", Font, Brushes.White, 20, 260);
+				g.DrawString($"'B' To toggle double_buffer: {doublebuffer}", Font, Brushes.White, 20, 280);
+				g.DrawString($"'H' To toggle rotation: {dorotate}", Font, Brushes.White, 20, 300);
+			}/* Show Stats */
 
-				/* Show FPS, Angles, Controls */
+			if (dodraw || dofill)
+			{
+				polygon_count = 0;
+				for (int j = 0; j < mesh1.Tris.Count; j++)
 				{
-					g.DrawString($"Target FPS: {tgfps}", Font, Brushes.White, 20, 40);
-					g.DrawString($"Frame interval: {timer.Interval} ms", Font, Brushes.White, 20, 60);
-					g.DrawString($"FPS: {Math.Round(FPS,2)}", Font, Brushes.White, 20, 80);
-					g.DrawString($"Frame number: {tick}", Font, Brushes.White, 20, 100);
-					g.DrawString($"Polygon count: {polygon_count}", Font, Brushes.White, 20, 120);
-					g.DrawString($"ANG_X: {Math.Round(angx, 2)}", Font, Brushes.White, 20, 140);
-					g.DrawString($"ANG_Y: {Math.Round(angy, 2)}", Font, Brushes.White, 20, 160);
-					g.DrawString($"ANG_Z: {Math.Round(angz, 2)}", Font, Brushes.White, 20, 180);
-					g.DrawString($"'E' / 'Q' To increase / decrease target fps", Font, Brushes.White, 20, 200);
-					g.DrawString($"'G' To select an .OBJ file", Font, Brushes.White, 20, 220);
-					g.DrawString($"'F' To toggle filling: {dofill}", Font, Brushes.White, 20, 240);
-					g.DrawString($"'R' To toggle drawing: {dodraw}", Font, Brushes.White, 20, 260);
-					g.DrawString($"'B' To toggle double_buffer: {doublebuffer}", Font, Brushes.White, 20, 280);
-					g.DrawString($"'H' To toggle rotation: {dorotate}", Font, Brushes.White, 20, 300);
-				}/* Show Stats */
-
-				if (dodraw || dofill)
-				{
-					polygon_count = 0;
-					for (int j = 0; j < mesh1.Tris.Count; j++)
+					polygon_count++;
+					tri t = mesh1.Tris[j];
+					Vector3 normal, line1, line2;
+					Vector3[] tproj = new Vector3[3];
+					for (int i = 0; i < 3; i++)
 					{
-						polygon_count++;
-						tri t = mesh1.Tris[j];
-						Vector3 normal, line1, line2;
-						Vector3[] tproj = new Vector3[3];
+						Vector3 pos = t.p[i];
+						pos *= (float)scale;
+						pos = Vector3.Transform(pos, rotMatX);
+						pos = Vector3.Transform(pos, rotMatY);
+						pos = Vector3.Transform(pos, rotMatZ);
+						tproj[i] = pos;
+					}
+					line1.X = tproj[1].X - tproj[0].X;
+					line1.Y = tproj[1].Y - tproj[0].Y;
+					line1.Z = tproj[1].Z - tproj[0].Z;
+
+					line2.X = tproj[2].X - tproj[0].X;
+					line2.Y = tproj[2].Y - tproj[0].Y;
+					line2.Z = tproj[2].Z - tproj[0].Z;
+
+					normal.X = line1.Y * line2.Z - line1.Z * line2.Y;
+					normal.Y = line1.Z * line2.X - line1.X * line2.Z;
+					normal.Z = line1.X * line2.Y - line1.Y * line2.X;
+
+					float l = (float)Math.Sqrt((double)(normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z));
+					normal.X /= l;
+					normal.Y /= l;
+					normal.Z /= l;
+
+					if (normal.Z > 0)
+					{
 						for (int i = 0; i < 3; i++)
 						{
-							Vector3 pos = t.p[i];
-							pos *= (float)scale;
-							pos = Vector3.Transform(pos, rotMatX);
-							pos = Vector3.Transform(pos, rotMatY);
-							pos = Vector3.Transform(pos, rotMatZ);
-							tproj[i] = pos;
+							tproj[i] = Vector3.Transform(tproj[i], projMat);
 						}
-						line1.X = tproj[1].X - tproj[0].X;
-						line1.Y = tproj[1].Y - tproj[0].Y;
-						line1.Z = tproj[1].Z - tproj[0].Z;
 
-						line2.X = tproj[2].X - tproj[0].X;
-						line2.Y = tproj[2].Y - tproj[0].Y;
-						line2.Z = tproj[2].Z - tproj[0].Z;
-
-						normal.X = line1.Y * line2.Z - line1.Z * line2.Y;
-						normal.Y = line1.Z * line2.X - line1.X * line2.Z;
-						normal.Z = line1.X * line2.Y - line1.Y * line2.X;
-
-						float l = (float)Math.Sqrt((double)(normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z));
-						normal.X /= l;
-						normal.Y /= l;
-						normal.Z /= l;
-
-						if (normal.Z > 0)
-						{
-							for (int i = 0; i < 3; i++)
-							{
-								tproj[i] = Vector3.Transform(tproj[i], projMat);
-							}
-
-							rastList.Add(new tri(tproj[0], tproj[1], tproj[2]));
-						}
+						rastList.Add(new tri(tproj[0], tproj[1], tproj[2]));
 					}
-					rastList.Sort((t1, t2) =>
-					{
-						float z1 = (t1.p[0].Z + t1.p[1].Z + t1.p[2].Z) / 3.0f;
-						float z2 = (t2.p[0].Z + t2.p[1].Z + t2.p[2].Z) / 3.0f;
-						return z1 > z2 ? 1 : (z1 < z2 ? -1 : 0);
-					});
-					foreach (tri t in rastList)
-					{
-						Point p1 = new Point((int)(t.p[0].X * 100 + centx), (int)(t.p[0].Y * 100 + centy));
-						Point p2 = new Point((int)(t.p[1].X * 100 + centx), (int)(t.p[1].Y * 100 + centy));
-						Point p3 = new Point((int)(t.p[2].X * 100 + centx), (int)(t.p[2].Y * 100 + centy));
-						Point[] p = new Point[3] { p1, p2, p3 };
+				}
+				rastList.Sort((t1, t2) =>
+				{
+					float z1 = (t1.p[0].Z + t1.p[1].Z + t1.p[2].Z) / 3.0f;
+					float z2 = (t2.p[0].Z + t2.p[1].Z + t2.p[2].Z) / 3.0f;
+					return z1 > z2 ? 1 : (z1 < z2 ? -1 : 0);
+				});
+				foreach (tri t in rastList)
+				{
+					Point p1 = new Point((int)(t.p[0].X * 100 + centx), (int)(t.p[0].Y * 100 + centy));
+					Point p2 = new Point((int)(t.p[1].X * 100 + centx), (int)(t.p[1].Y * 100 + centy));
+					Point p3 = new Point((int)(t.p[2].X * 100 + centx), (int)(t.p[2].Y * 100 + centy));
+					Point[] p = new Point[3] { p1, p2, p3 };
 
-						//drawing module
-						if (dofill)
-						{
-							g.FillPolygon(Brushes.DarkGray, p);
-						}
-						if (dodraw)
-						{
-							g.DrawPolygon(Pens.White, p);
-						}
+					//drawing module
+					if (dofill)
+					{
+						g.FillPolygon(Brushes.DarkGray, p);
+					}
+					if (dodraw)
+					{
+						g.DrawPolygon(Pens.White, p);
 					}
 				}
 			}
-			using (Graphics formGraphics = CreateGraphics())
-			{
-				//formGraphics.DrawImage(buffer, 0, 0);
-			}
-			buffer.Dispose();
 		}
-
-
 		public void Form1_KeyDown(object sender, KeyEventArgs e)
 		{
 			switch (e.KeyCode)
